@@ -1,0 +1,78 @@
+<?php
+/**
+ * @file
+ * Code for the custom_mailing_list feature.
+ */
+
+
+
+/**
+ * Implements hook_block_info().
+ */
+function custom_maling_list_block_info() {
+  $blocks['mailing_list'] = array(
+    'info' => t('Mailing List signup (Main)'),
+    'cache' => DRUPAL_CACHE_GLOBAL,
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function custom_maling_list_block_view($delta = '') {
+  $block = array();
+
+  if ($delta == 'mailing_list') {
+    $block['subject'] = t('Keep in Touch');
+    $block['content'] = drupal_get_form('custom_maling_list_main_form');
+  }
+
+  return $block;
+}
+
+/**
+ * Form constructor: custom Mailing List sign up form
+ *
+ */
+function custom_maling_list_main_form() {
+  $form = array(
+    '#action' => '//tracking.wordfly.com/subscribe/handler.ashx',
+    '#attributes' => array(
+      'id' => 'mc-embedded-subscribe-form'
+    )
+  );
+
+  $form['intro'] = array(
+    '#markup' => '<p>' . t('Sign up to receive monthly updates') . '</p>',
+  );
+
+  $form['EMAIL'] = array(
+    '#type' => 'textfield',
+    '#name' => 'wf_e',
+    '#required' => TRUE,
+    '#attributes' => array(
+      'placeholder' => t('Email address *')
+    )
+  );
+
+  $form['responses'] = array(
+    '#markup' => '<input type="hidden" name="wf_o" value="" /><!-- WordFly Organization Guid -->
+                  <input type="hidden" name="wf_l" value="" /><!-- WordFly List Guid -->
+                  <input type="hidden" name="wf_r" value="" /><!-- Confirmation Redirect URL -->',
+  );
+
+  $form['honeypot'] = array(
+    '#markup' => '<!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+    <div aria-hidden="true"><input type="text" name="" tabindex="-1" value=""></div>',
+  );
+
+  $form['actions']['#type'] = 'actions';
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Subscribe'),
+  );
+
+  return $form;
+}
